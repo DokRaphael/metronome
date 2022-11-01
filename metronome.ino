@@ -30,8 +30,8 @@ int buttonStateToggle;             // the current reading from the input pin
 int lastButtonStateToggle = LOW; 
 
 #define PIEZO 7
-int lastwait = 0;
-int wait = 0;
+unsigned long lastwait = 0;
+unsigned long wait = 0;
 int bpm = 120;
 bool activate = true;
 
@@ -49,7 +49,6 @@ void setup() {
   PreviousDATA=digitalRead(ROTDT);
   pinMode(TOGGLE_BUTON, INPUT);
 
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     // Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
@@ -81,7 +80,6 @@ void loop() {
   
       // only toggle the LED if the new button state is HIGH
       if (buttonStateToggle == LOW) {
-          // Serial.println("TOGGLE");
           activate = !activate;
       }
     }
@@ -90,7 +88,6 @@ void loop() {
 
   wait = 60000/bpm;
   wait = wait-50;
-  // Serial.println(lastButtonStateToggle);
   if(activate){
     if(millis()-lastwait>wait){
       MIDI.sendClock();
@@ -104,10 +101,6 @@ void toneGenerate(){
   digitalWrite(LED_BUILTIN,HIGH);
   piezoTone(2000,50);
   digitalWrite(LED_BUILTIN,LOW);
-  // wait = 60000/bpm;
-  // wait = wait-50;
-  // delay(wait);
-  // lastwait = 0;
 }
 void testdrawstyles(int ctnr) {
   display.clearDisplay();
@@ -124,12 +117,10 @@ void check_rotary() {
   if ((PreviousCLK == 0) && (PreviousDATA == 1)) {
     if ((digitalRead(ROTCLK) == 1) && (digitalRead(ROTDT) == 0)) {
       bpm=bpm+5;
-      // Serial.println("VolumeUP");
       testdrawstyles(bpm);
     }
     if ((digitalRead(ROTCLK) == 1) && (digitalRead(ROTDT) == 1)) {
       bpm=bpm-5;
-      // Serial.println("VolumeDOWN");
       testdrawstyles(bpm);
     }
   }
@@ -137,12 +128,10 @@ void check_rotary() {
   if ((PreviousCLK == 1) && (PreviousDATA == 1)) {
     if ((digitalRead(ROTCLK) == 0) && (digitalRead(ROTDT) == 1)) {
       bpm=bpm+5;
-      // Serial.println("VolumeUP");
       testdrawstyles(bpm);
     }
     if ((digitalRead(ROTCLK) == 0) && (digitalRead(ROTDT) == 0)) {
       bpm=bpm-5;
-      // Serial.println("VolumeDOWN");
       testdrawstyles(bpm);
     }
   }     
